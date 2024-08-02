@@ -14,10 +14,10 @@ class Triangle:
     def destroy(self): #Method to remove all resources since there's no garbage collector in moderngl
         self.vao.release()
         self.vbo.release()
-        self.shader_program.release
+        self.shader_program.release()
 
     def get_vertex_data(self):
-        vertex_data = [(-0.6, -0.8, 0.0), (0.6, -0.8, 0.0), (0.0, 0.8, 0.0)]
+        vertex_data = [(-0.6, -0.8, 0.0), (0.6, -0.8, 0.0), (0.0, 0.8, 0.0)] #In opengl the origin is at the center of the screen
         return np.array(vertex_data, dtype='f4') #Float32 data type
         
     def get_vbo(self): #Get the vertex buffer object to sent to GPU memory
@@ -26,10 +26,10 @@ class Triangle:
         return vbo
     
     def get_shader_program(self, shader_name): #Load the shader program
-        with open(f"shaders/vert/{shader_name}.vert", "r") as file:
+        with open(f"shaders/vertex/{shader_name}.vert", "r") as file:
             vertex_shader = file.read()
 
-        with open(f"shaders/frag/{shader_name}.frag", "r") as file:
+        with open(f"shaders/fragment/{shader_name}.frag", "r") as file:
             fragment_shader = file.read()
 
         #Compile both shaders from source code and combine them in a shader program

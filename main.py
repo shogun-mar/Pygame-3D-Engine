@@ -3,7 +3,9 @@ import moderngl as mgl
 import sys
 from settings import *
 
-from model import Triangle
+from camera import Camera
+from triangle import Triangle
+from cube import Cube
 
 class GraphicsEngine:
     def __init__(self, window_title):
@@ -19,16 +21,23 @@ class GraphicsEngine:
         pg.display.set_caption(window_title) #Set window title
         #Clock object
         self.clock = pg.time.Clock()
+        #Camera object
+        self.camera = Camera(self)
+        #Scene objects
+        self.scene = Cube(self)
 
     def check_events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
+                self.scene.destroy() #Remove all resources
                 pg.quit()
                 sys.exit()
 
     def render(self):
         #Clear the framebuffer with a color
         self.ctx.clear(color = (0.08, 0.16, 0.18))
+        #Render the scene
+        self.scene.render()
         #Swap the buffers
         pg.display.flip()
     

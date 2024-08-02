@@ -1,7 +1,7 @@
-#version 330 core //Define opengl version and context profile mask
+#version 330 core 
+//Define opengl version and context profile mask
 
 layout (location = 0) out vec4 fragColor; //4 component vector to contain RGBA values
-
 
 void main() {
     //Let all the fragments be red
