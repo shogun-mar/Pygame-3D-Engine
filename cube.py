@@ -1,4 +1,5 @@
 import glm
+import pygame as pg
 import numpy as np
 
 class Cube:
@@ -11,8 +12,15 @@ class Cube:
         self.m_model = self.get_model_matrix()
         self.on_init()
 
+    def get_texture(self, path):
+        texture = pg.image.load(path).convert_alpha()
+        texture = self.ctx.texture(size = texture.get_size(), components = 3,
+                                   data = pg.image.toString(texture, 'RGB'))
+        
+        return texture
+
     def get_model_matrix(self):
-        m_model = glm.mat4() #Identity matrix
+        m_model = glm.mat4(1.0) #Identity matrix
         return m_model
 
     def on_init(self): #Pass the projection matrix from the camera instance to the shader program
@@ -21,7 +29,7 @@ class Cube:
         self.shader_program['m_model'].write(self.m_model)
 
     def update(self):
-        m_model = glm.rotate(self.m_model, self.engine.time, glm.vec3(0, 1, 0)) #Rotate the cube around the y-axis
+        m_model = glm.rotate(self.m_model, self.engine.time, glm.vec3(0, 1, 0))
         self.shader_program['m_model'].write(m_model)
 
     def render(self):
@@ -55,10 +63,10 @@ class Cube:
                              (3, 1, 2), (3, 0, 1)]
         tex_coord_data = self.get_data(tex_coord, tex_coord_indices)
 
-        #vertex_data = np.hstack([vertex_data, tex_coord_data]) #Horizontally stack the vertex data and the texture coordinate data
+        vertex_data = np.hstack([tex_coord_data, vertex_data]) #Horizontally stack the vertex data and the texture coordinate data
 
         return vertex_data 
-    
+        
     @staticmethod #Utility function to get the data from the vertices and indices
     def get_data(vertices, indices):
         #Associate the indices in indices to the corresponding vertices in vertices
@@ -84,7 +92,6 @@ class Cube:
     
     def get_vao(self):
         #Create a vertex array object to store the vertex buffer object and the shader program (3f means 3 floats per vertex, in_position is the name of the attribute in the vertex shader)
-        vao = self.ctx.vertex_array(self.shader_program, [(self.vbo, '3f', 'in_position')])
-        #vao = self.ctx.vertex_array(self.shader_program, [(self.vbo, '2f 3f', 'in_textcoord_0', 'in_position')])
-        #2f float dedicated to the texture coordinates and 3f float dedicated to the position of the vertices
+        vao = self.ctx.vertex_array(self.shader_program, [(self.vbo, ' 2f 3f', 'in_texcoord_0', 'in_position')])
+        #2floats for the texture coordinates and 3 floats for the position
         return vao

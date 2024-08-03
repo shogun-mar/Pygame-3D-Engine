@@ -18,6 +18,8 @@ class GraphicsEngine:
         #Create opengl context
         pg.display.set_mode(WINDOW_SIZE, FLAGS) #Double buffering provides two complete color buffers one for display and one for drawing that switch roles after each frame
         self.ctx = mgl.create_context() #Create moderngl context from already existing opengl context
+        #self.ctx.front_face = 'cw' #Set the front face of the cube to clockwise to see the internal faces
+        self.ctx.enable(flags=mgl.DEPTH_TEST | mgl.CULL_FACE) #Enable depth test flag (maybe synonym of z buffering) and cull face flag to not render invisible faces
         pg.display.set_caption(window_title) #Set window title
         #Clock object
         self.clock = pg.time.Clock()
@@ -34,25 +36,29 @@ class GraphicsEngine:
                 pg.quit()
                 sys.exit()
 
+    def update(self):
+        #Update time
+        self.update_time()
+        #Update the scene
+        self.scene.update()
+
     def render(self):
         #Clear the framebuffer with a color
         self.ctx.clear(color = (0.08, 0.16, 0.18))
-        #Update the scene
-        self.scene.update()
         #Render the scene
         self.scene.render()
         #Swap the buffers
         pg.display.flip()
-
-    def update_time(self):
-        self.time = pg.time.get_ticks() / 1000 #Time in seconds
-
+    
     def run(self):
         while True:
-            self.update_time()
             self.check_events()
+            self.update()
             self.render()
             self.clock.tick(60)
+
+    def update_time(self):
+        self.time = pg.time.get_ticks() * 0.001
 
 if __name__ == "__main__":
     engine = GraphicsEngine("ModernGL 3D Graphics")
