@@ -21,6 +21,7 @@ class GraphicsEngine:
         pg.display.set_caption(window_title) #Set window title
         #Clock object
         self.clock = pg.time.Clock()
+        self.time = 0
         #Camera object
         self.camera = Camera(self)
         #Scene objects
@@ -36,13 +37,19 @@ class GraphicsEngine:
     def render(self):
         #Clear the framebuffer with a color
         self.ctx.clear(color = (0.08, 0.16, 0.18))
+        #Update the scene
+        self.scene.update()
         #Render the scene
         self.scene.render()
         #Swap the buffers
         pg.display.flip()
-    
+
+    def update_time(self):
+        self.time = pg.time.get_ticks() / 1000 #Time in seconds
+
     def run(self):
         while True:
+            self.update_time()
             self.check_events()
             self.render()
             self.clock.tick(60)
