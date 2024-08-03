@@ -11,6 +11,9 @@ class GraphicsEngine:
     def __init__(self, window_title):
         #Init pygame modules
         pg.init()
+        #Mouse settings
+        pg.event.set_grab(True)
+        pg.mouse.set_visible(False)
         #Set opengl attributes
         pg.display.gl_set_attribute(pg.GL_CONTEXT_MAJOR_VERSION, 3) #OpenGL 3.3 version
         pg.display.gl_set_attribute(pg.GL_CONTEXT_MINOR_VERSION, 3)
@@ -24,6 +27,7 @@ class GraphicsEngine:
         #Clock object
         self.clock = pg.time.Clock()
         self.time = 0
+        self.delta_time = 0 #variable to keep movement speed and physics indipendent from framerate
         #Camera object
         self.camera = Camera(self)
         #Scene objects
@@ -39,6 +43,8 @@ class GraphicsEngine:
     def update(self):
         #Update time
         self.update_time()
+        #Update the camera
+        self.camera.update()
         #Update the scene
         self.scene.update()
 
@@ -55,7 +61,7 @@ class GraphicsEngine:
             self.check_events()
             self.update()
             self.render()
-            self.clock.tick(60)
+            self.delta_time = self.clock.tick(60)
 
     def update_time(self):
         self.time = pg.time.get_ticks() * 0.001

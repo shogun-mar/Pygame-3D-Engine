@@ -10,12 +10,14 @@ class Cube:
         self.shader_program = self.get_shader_program("default")
         self.vao = self.get_vao()
         self.m_model = self.get_model_matrix()
+        self.texture = self.get_texture(path = 'textures/crate.jpg')
         self.on_init()
 
     def get_texture(self, path):
         texture = pg.image.load(path).convert_alpha()
+        texture = pg.transform.flip(texture, flip_x=False, flip_y=True) #Flip the image vertically because in pygame the y axis down and in opengl it extends up
         texture = self.ctx.texture(size = texture.get_size(), components = 3,
-                                   data = pg.image.toString(texture, 'RGB'))
+                                   data = pg.image.tostring(texture, 'RGB'))
         
         return texture
 
@@ -24,13 +26,18 @@ class Cube:
         return m_model
 
     def on_init(self): #Pass the projection matrix from the camera instance to the shader program
+        #Texture
+        self.shader_program['u_texture_0'] = 0
+        self.texture.use()
+        #Matrices
         self.shader_program['m_proj'].write(self.engine.camera.m_proj)
         self.shader_program['m_view'].write(self.engine.camera.m_view)
         self.shader_program['m_model'].write(self.m_model)
 
     def update(self):
-        m_model = glm.rotate(self.m_model, self.engine.time, glm.vec3(0, 1, 0))
+        m_model = glm.rotate(self.m_model, self.engine.time * 0.5, glm.vec3(0, 1, 0))
         self.shader_program['m_model'].write(m_model)
+        self.shader_program['m_view'].write(self.engine.camera.m_view) #Update view matrix because the camera moving changes the view matrix
 
     def render(self):
         self.vao.render()
