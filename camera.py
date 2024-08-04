@@ -13,7 +13,7 @@ class Camera:
     def __init__(self, engine, yaw = -90, pitch = 0):
         self.engine = engine
         self.aspect_ratio = WINDOW_SIZE[0] / WINDOW_SIZE[1]
-        self.position =glm.vec3(2, 0, 3)
+        self.position =glm.vec3(2, 2, 3)
         self.up = glm.vec3(0, 1, 0)
         self.right = glm.vec3(1, 0, 0)
         self.forward = glm.vec3(0, 0, -1)

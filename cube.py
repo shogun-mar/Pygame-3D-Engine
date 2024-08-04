@@ -10,7 +10,7 @@ class Cube:
         self.shader_program = self.get_shader_program("default")
         self.vao = self.get_vao()
         self.m_model = self.get_model_matrix()
-        self.texture = self.get_texture(path = 'textures/crate.jpg')
+        self.texture = self.get_texture(path = 'textures/nduja.jpg')
         self.on_init()
 
     def get_texture(self, path):
@@ -26,6 +26,11 @@ class Cube:
         return m_model
 
     def on_init(self): #Pass the projection matrix from the camera instance to the shader program
+        #Lightsource
+        self.shader_program['light.position'].write(self.engine.light.position)
+        self.shader_program['light.ambient_intensity'].write(self.engine.light.ambient_intensity)
+        self.shader_program['light.diffuse_intensity'].write(self.engine.light.diffuse_intensity)
+        self.shader_program['light.specular_intensity'].write(self.engine.light.specular_intensity)
         #Texture
         self.shader_program['u_texture_0'] = 0
         self.texture.use()
@@ -38,6 +43,7 @@ class Cube:
         m_model = glm.rotate(self.m_model, self.engine.time * 0.5, glm.vec3(0, 1, 0))
         self.shader_program['m_model'].write(m_model)
         self.shader_program['m_view'].write(self.engine.camera.m_view) #Update view matrix because the camera moving changes the view matrix
+        self.shader_program['camPos'].write(self.engine.camera.position) #Update the camera position uniform
 
     def render(self):
         self.vao.render()
@@ -70,6 +76,17 @@ class Cube:
                              (3, 1, 2), (3, 0, 1)]
         tex_coord_data = self.get_data(tex_coord, tex_coord_indices)
 
+        normals = [(0 ,0, 1) * 6, #Normal are vectors that are perpendicular to a surface,
+                   (1, 0, 0) * 6, #each face of the cube is made up of 2 triangles which are made up of 3 vertices each
+                   (0, 0 ,-1) * 6, #so in totale 36 normals, one for every vertices. (EACH VERTICE OF THE SAME FACE HAS THE SAME NORMAL)
+                   (-1, 0, 0) * 6,
+                   (0, 1, 0) * 6,
+                   (0, -1, 0) * 6
+                   ]
+        
+        normals = np.array(normals, dtype='f4').reshape(36, 3)
+
+        vertex_data = np.hstack([normals, vertex_data])
         vertex_data = np.hstack([tex_coord_data, vertex_data]) #Horizontally stack the vertex data and the texture coordinate data
 
         return vertex_data 
@@ -99,6 +116,6 @@ class Cube:
     
     def get_vao(self):
         #Create a vertex array object to store the vertex buffer object and the shader program (3f means 3 floats per vertex, in_position is the name of the attribute in the vertex shader)
-        vao = self.ctx.vertex_array(self.shader_program, [(self.vbo, ' 2f 3f', 'in_texcoord_0', 'in_position')])
-        #2floats for the texture coordinates and 3 floats for the position
+        vao = self.ctx.vertex_array(self.shader_program, [(self.vbo, ' 2f 3f 3f', 'in_texcoord_0', 'in_normal', 'in_position')])
+        #2floats for the texture coordinates, 3 float for the normal vector and 3 float for the position
         return vao

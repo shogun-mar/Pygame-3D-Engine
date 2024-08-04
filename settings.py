@@ -1,4 +1,4 @@
 import pygame
 
-WINDOW_SIZE = (800, 600)
+WINDOW_SIZE = (1000, 800)
 FLAGS = pygame.DOUBLEBUF | pygame.OPENGL

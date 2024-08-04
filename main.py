@@ -4,6 +4,7 @@ import sys
 from settings import *
 
 from camera import Camera
+from light import LightSource
 from triangle import Triangle
 from cube import Cube
 
@@ -28,6 +29,8 @@ class GraphicsEngine:
         self.clock = pg.time.Clock()
         self.time = 0
         self.delta_time = 0 #variable to keep movement speed and physics indipendent from framerate
+        #Lightsource object
+        self.light = LightSource()
         #Camera object
         self.camera = Camera(self)
         #Scene objects
