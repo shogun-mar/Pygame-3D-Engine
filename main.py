@@ -4,9 +4,10 @@ import sys
 from settings import *
 
 from camera import Camera
+from model import *
+from mesh import Mesh
 from light import LightSource
-from triangle import Triangle
-from cube import Cube
+from scene import Scene
 
 class GraphicsEngine:
     def __init__(self, window_title):
@@ -33,19 +34,21 @@ class GraphicsEngine:
         self.light = LightSource()
         #Camera object
         self.camera = Camera(self)
+        #Mesh object
+        self.mesh = Mesh(self)
         #Scene objects
-        self.scene = Cube(self)
+        self.scene = Scene(self)
 
     def check_events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
-                self.scene.destroy() #Remove all resources
+                self.mesh.destroy() #Remove all resources
                 pg.quit()
                 sys.exit()
 
     def update(self):
         #Update time
-        self.update_time()
+        self.time = pg.time.get_ticks() * 0.001 #In seconds
         #Update the camera
         self.camera.update()
         #Update the scene
@@ -65,9 +68,6 @@ class GraphicsEngine:
             self.update()
             self.render()
             self.delta_time = self.clock.tick(60)
-
-    def update_time(self):
-        self.time = pg.time.get_ticks() * 0.001
 
 if __name__ == "__main__":
     engine = GraphicsEngine("ModernGL 3D Graphics")
