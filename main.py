@@ -56,7 +56,7 @@ class GraphicsEngine:
 
     def render(self):
         #Clear the framebuffer with a color
-        self.ctx.clear(color = (0.08, 0.16, 0.18))
+        self.ctx.clear(color = (0.2, 0.16, 0.18))
         #Render the scene
         self.scene.render()
         #Swap the buffers
